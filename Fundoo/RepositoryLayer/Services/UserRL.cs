@@ -44,8 +44,8 @@ namespace RepositoryLayer.Services
             }
         }
 
-       
-       
+
+
 
         public string login(UserLogin userLogin)
         {
@@ -77,7 +77,7 @@ namespace RepositoryLayer.Services
                         new Claim("userId",userId.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials=
+                SigningCredentials =
                 new SigningCredentials(
                     new SymmetricSecurityKey(tokenkey),
                     SecurityAlgorithms.HmacSha256Signature)
@@ -85,8 +85,46 @@ namespace RepositoryLayer.Services
             var token = tokenHandler.CreateToken(tokenDescription);
             return tokenHandler.WriteToken(token);
         }
+
+
+       
+        public bool ForgotPassword(string email)
+        {
+            try
+            {
+                User user = new User();
+                var result = dbContext.User.Where(x => x.email == email).FirstOrDefault();
+                if (result != null)
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public void ResetPassword(string email, string password, string cPassword)
+        {   
+            try
+            {
+                    User user = new User();
+                    var result = dbContext.User.FirstOrDefault(a => a.email == email);
+                    if (result != null)
+                    {
+                        result.password = password;
+                        result.cPassword = cPassword;
+                        dbContext.SaveChanges();
+                    }
+            }
+            catch (Exception e)
+            {
+                    throw e;
+            }
             
-    
+
+        }
     }
 }
 

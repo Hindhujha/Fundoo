@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interface;
 using CommonLayer.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryLayer.Services;
 using System;
@@ -45,6 +46,45 @@ namespace FundooNotes.Controllers
             catch (Exception e)
             {
                 throw e;
+            }
+        }
+
+
+        [HttpPut("ForgotPassword")]
+        public IActionResult ForgotPassword(string email)
+        {
+            
+            try
+            {
+                bool result = this.userBL.ForgotPassword(email);
+                if(result==true)
+                return this.Ok(new { success = true, message = $"Token generated.Please check your email" });
+                else
+                return this.Ok(new { success = false, message = $"email not sent" });
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { success = false, e.Message });
+            }
+
+        }
+        [Authorize]
+        [HttpPut("resetpassword")]
+        public ActionResult ResetPassword(string email, string password, string cPassword)
+        {
+            try
+            {
+                if (password == cPassword)
+                {
+                    return this.Ok(new { success = false, message = $"your old password is same as current password" });
+                }
+                this.userBL.ResetPassword(email, password, cPassword);
+                return this.Ok(new { success = true, message = $"password changes successfully to {email}" });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { success = false, e.Message });
             }
         }
 
