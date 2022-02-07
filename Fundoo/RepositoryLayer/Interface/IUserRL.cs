@@ -16,6 +16,8 @@ namespace RepositoryLayer.Interface
 
         public void ResetPassword(string email, string password, string cPassword);
 
+        List<User> GetAllUsers();
+
     }
 
 }

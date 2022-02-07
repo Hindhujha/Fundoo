@@ -9,10 +9,12 @@ namespace BusinessLayer.Interface
     public interface IUserBL
     {
       
-            void RegisterUser(UserPostModel userPostModel);
-            void Login(UserLogin login);
+        void RegisterUser(UserPostModel userPostModel);
+        string Login(UserLogin login);
 
-            public bool ForgotPassword(string email);
+        bool ForgotPassword(string email);
         void ResetPassword(string email, string password, string cPassword);
+
+        List<User> GetAllUsers();
     }
 }

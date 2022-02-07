@@ -6,6 +6,7 @@ using RepositoryLayer.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FundooNotes.Controllers
@@ -40,8 +41,11 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                this.userBL.Login(login);
-                return this.Ok(new { success = true, message = $"Login Successful for your given Mail-ID  {login.email}" });
+                string result = this.userBL.Login(login);
+                if (result != null)
+                    return this.Ok(new { success = true, message = $"LogIn Successful {login.email}, Token = {result}" });
+                else
+                    return this.BadRequest(new { Success = false, message = "Invalid Username and Password" });
             }
             catch (Exception e)
             {
@@ -58,7 +62,7 @@ namespace FundooNotes.Controllers
             {
                 bool result = this.userBL.ForgotPassword(email);
                 if(result==true)
-                return this.Ok(new { success = true, message = $"Token generated.Please check your email" });
+                return this.Ok(new { success = true, message = $"Token generated.Please check your email,data={result}" });
                 else
                 return this.Ok(new { success = false, message = $"email not sent" });
 
@@ -75,11 +79,12 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                if (password == cPassword)
+                var UserEmailObject = User.Claims.First(x=>x.Type=="email").Value;
+                if (password != cPassword)
                 {
                     return this.Ok(new { success = false, message = $"your old password is same as current password" });
                 }
-                this.userBL.ResetPassword(email, password, cPassword);
+                this.userBL.ResetPassword(UserEmailObject, password, cPassword);
                 return this.Ok(new { success = true, message = $"password changes successfully to {email}" });
             }
             catch (Exception e)
@@ -87,6 +92,19 @@ namespace FundooNotes.Controllers
                 return BadRequest(new { success = false, e.Message });
             }
         }
+        [HttpGet("getallusers")]
+        public ActionResult GetAllUsers()
+        {
+            try
+            {
+                var result = this.userBL.GetAllUsers();
+                return this.Ok(new { success = true, message = $"Below are the User data", data = result });
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
 
+        }
     }
 }

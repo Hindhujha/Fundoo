@@ -17,11 +17,11 @@ namespace BusinessLayer.Services
             this.userRL =userRL ;
         }
 
-        public void Login(UserLogin login)
+        public string Login(UserLogin login)
         {
             try
             {
-                userRL.login(login);
+                return userRL.login(login);
 
             }
             catch (Exception e)
@@ -69,5 +69,20 @@ namespace BusinessLayer.Services
             }
         }
 
+        public List<User>GetAllUsers()
+        {
+            try
+            {
+                return userRL.GetAllUsers();
+
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+       
+
+       
     }
 }

@@ -7,7 +7,7 @@ using System.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-
+using Experimental.System.Messaging;
 
 namespace RepositoryLayer.Services
 {
@@ -28,8 +28,9 @@ namespace RepositoryLayer.Services
                 user.fName = userPostModel.fName;
                 user.lName = userPostModel.lName;
                 user.email = userPostModel.email;
+               
                 user.address = userPostModel.address;
-                user.password = userPostModel.password;
+                user.password = StringCipher.Encrypt(userPostModel.password);
                 user.cPassword = userPostModel.cPassword;
                 user.phNo = userPostModel.phNo;
 
@@ -44,7 +45,7 @@ namespace RepositoryLayer.Services
             }
         }
 
-
+       
 
 
         public string login(UserLogin userLogin)
@@ -54,16 +55,19 @@ namespace RepositoryLayer.Services
                 User user = new User();
                 var result = dbContext.User.Where(x => x.email == userLogin.email && x.password == userLogin.password).FirstOrDefault();
                 if (result != null)
+                {
                     return GenerateJwtToken(userLogin.email, user.UserId);
+                }
                 else
+                {
                     return null;
+                }
             }
             catch (Exception e)
             {
                 throw e;
             }
         }
-
 
         private static string GenerateJwtToken(string email, int userId)
         {
@@ -87,7 +91,10 @@ namespace RepositoryLayer.Services
         }
 
 
-       
+
+
+
+
         public bool ForgotPassword(string email)
         {
             try
@@ -124,6 +131,41 @@ namespace RepositoryLayer.Services
             }
             
 
+        }
+
+        public List<User> GetAllUsers()
+        {
+            try
+            {
+                var result = dbContext.User.ToList();
+                return result;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+            private void msmqQueue_ReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
+            {
+            try
+            {
+                MessageQueue queue = (MessageQueue)sender;
+                Message msg = queue.EndReceive(e.AsyncResult);
+               // EmailService.SendEmail(e.Message.ToString(), GenerateToken(e.Message.ToString()));
+                queue.BeginReceive();
+            }
+            catch (MessageQueueException ex)
+            {
+                if (ex.MessageQueueErrorCode ==
+
+                    MessageQueueErrorCode.AccessDenied)
+                {
+                    Console.WriteLine("Access is denied. " +
+                        "Queue might be a system queue.");
+                }
+                // Handle other sources of MessageQueueException.
+            }
         }
     }
 }
