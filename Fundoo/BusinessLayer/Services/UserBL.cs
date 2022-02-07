@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.Interface;
 using CommonLayer.User;
 using RepositoryLayer.Interface;
+using RepositoryLayer.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +16,20 @@ namespace BusinessLayer.Services
         {
             this.userRL =userRL ;
         }
+
+        public void Login(UserLogin login)
+        {
+            try
+            {
+                userRL.login(login);
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public void RegisterUser(UserPostModel userPostModel)
         {
 
