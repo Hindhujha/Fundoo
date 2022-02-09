@@ -8,12 +8,14 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Experimental.System.Messaging;
+using Microsoft.Extensions.Configuration;
 
 namespace RepositoryLayer.Services
 {
     public class UserRL : IUserRL
     {
         FundooDbContext dbContext;
+        private readonly IConfiguration configuration;
 
         public UserRL(FundooDbContext dbContext)
         {
@@ -35,6 +37,7 @@ namespace RepositoryLayer.Services
                 user.phNo = userPostModel.phNo;
 
                 user.registeredDate = DateTime.Now;
+             
                 dbContext.User.Add(user);
                 dbContext.SaveChanges();
 
@@ -53,10 +56,12 @@ namespace RepositoryLayer.Services
             try
             {
                 User user = new User();
+           
                 var result = dbContext.User.Where(x => x.email == userLogin.email && x.password == userLogin.password).FirstOrDefault();
+               
                 if (result != null)
                 {
-                    return GenerateJwtToken(userLogin.email, user.UserId);
+                    return GenerateJWTToken(userLogin.email, user.UserId);
                 }
                 else
                 {
@@ -69,48 +74,102 @@ namespace RepositoryLayer.Services
             }
         }
 
-        private static string GenerateJwtToken(string email, int userId)
+        private static string GenerateToken(string Email)
         {
+            if (Email == null)
+            {
+                return null;
+            }
+
             var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenkey = Encoding.ASCII.GetBytes("THIS_IS_MY_KEY_TO_GENERATE_TOKEN");
-            var tokenDescription = new SecurityTokenDescriptor
+            var tokenKey = Encoding.ASCII.GetBytes("THIS_IS_MY_KEY_TO_GENERATE_TOKEN");
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                        new Claim("email",email),
-                        new Claim("userId",userId.ToString())
+                    new Claim("Email", Email),
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials =
                 new SigningCredentials(
-                    new SymmetricSecurityKey(tokenkey),
+                    new SymmetricSecurityKey(tokenKey),
                     SecurityAlgorithms.HmacSha256Signature)
             };
-            var token = tokenHandler.CreateToken(tokenDescription);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
 
-
-
-
+        private static string GenerateJWTToken(string Email, int userId)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenKey = Encoding.ASCII.GetBytes("THIS_IS_MY_KEY_TO_GENERATE_TOKEN");
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim("Email", Email),
+                    new Claim("userId", userId.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials =
+                new SigningCredentials(
+                    new SymmetricSecurityKey(tokenKey),
+                    SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
 
 
         public bool ForgotPassword(string email)
         {
             try
             {
-                User user = new User();
-                var result = dbContext.User.Where(x => x.email == email).FirstOrDefault();
-                if (result != null)
+                var checkemail = dbContext.User.FirstOrDefault(e => e.email == email);
+                //var checkemail = dbContex.Users.FirstOrDefault(e => e.Email == email);
+                if (checkemail != null)
+                {
+                    MessageQueue queue;
+                    //ADD MESSAGE TO QUEUE
+                    if (MessageQueue.Exists(@".\Private$\FundooQueue"))
+                    {
+                        queue = new MessageQueue(@".\Private$\FundooQueue");
+                    }
+                    else
+                    {
+                        queue = MessageQueue.Create(@".\Private$\FundooQueue");
+                    }
+
+                    Message MyMessage = new Message();
+                    MyMessage.Formatter = new BinaryMessageFormatter();
+                    MyMessage.Body = GenerateJWTToken(email, checkemail.UserId);
+                    MyMessage.Label = "Forget Password Email";
+                    queue.Send(MyMessage);
+                    Message msg = queue.Receive();
+                    msg.Formatter = new BinaryMessageFormatter();
+                    EmailServices.SendMail(email, msg.Body.ToString());
+                    queue.ReceiveCompleted += new ReceiveCompletedEventHandler(msmqQueue_ReceiveCompleted);
+
+                    queue.BeginReceive();
+                    queue.Close();
                     return true;
+
+                }
                 else
+                {
                     return false;
+                }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+
+                throw;
             }
+
         }
+
+
+
 
         public void ResetPassword(string email, string password, string cPassword)
         {   
@@ -146,8 +205,22 @@ namespace RepositoryLayer.Services
             }
         }
 
-            private void msmqQueue_ReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
+        public string ClaimTokenByID(long Id)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(configuration["THIS_IS_MY_KEY_TO_GENERATE_TOKEN"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
+                Subject = new ClaimsIdentity(new[] { new Claim("userId", Id.ToString()) }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+
+        private void msmqQueue_ReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
+          {
             try
             {
                 MessageQueue queue = (MessageQueue)sender;
@@ -166,7 +239,10 @@ namespace RepositoryLayer.Services
                 }
                 // Handle other sources of MessageQueueException.
             }
-        }
+          }
+
+       
+       
     }
 }
 

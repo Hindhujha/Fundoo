@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace FundooNotes.Controllers
 {
@@ -60,12 +59,8 @@ namespace FundooNotes.Controllers
             
             try
             {
-                bool result = this.userBL.ForgotPassword(email);
-                if(result==true)
-                return this.Ok(new { success = true, message = $"Token generated.Please check your email,data={result}" });
-                else
-                return this.Ok(new { success = false, message = $"email not sent" });
-
+              this.userBL.ForgotPassword(email);              
+                return this.Ok(new { success = true, message = $"Token generated.Please check your email" });              
             }
             catch (Exception e)
             {
@@ -73,23 +68,32 @@ namespace FundooNotes.Controllers
             }
 
         }
-        [Authorize]
-        [HttpPut("resetpassword")]
-        public ActionResult ResetPassword(string email, string password, string cPassword)
+        [AllowAnonymous]
+        [HttpPut("Reset Password")]
+        public ActionResult ResetPassword(string Email, string Password, string cpassword)
         {
             try
             {
-                var UserEmailObject = User.Claims.First(x=>x.Type=="email").Value;
-                if (password != cPassword)
+                if (Password != cpassword)
                 {
-                    return this.Ok(new { success = false, message = $"your old password is same as current password" });
+                    return this.BadRequest(new { success = false, message = $"Passwords are not same" });
                 }
-                this.userBL.ResetPassword(UserEmailObject, password, cPassword);
-                return this.Ok(new { success = true, message = $"password changes successfully to {email}" });
+                var Identity = User.Identity as ClaimsIdentity;
+                //var UserEmailObject = User.Claims.First(x => x.Type == "Email").Value;
+                if (Identity != null)
+                {
+                    IEnumerable<Claim> claims = Identity.Claims;
+                    var UserEmailObject = claims.Where(p => p.Type == @"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").FirstOrDefault()?.Value;
+                    this.userBL.ResetPassword(UserEmailObject, Password, cpassword);
+                    return Ok(new { success = true, message = "Password Changed Sucessfully", email = $"{Email}" });
+                }
+
+                //  this.userBL.ResetPassword(UserEmailObject, Password, cpassword);
+                return this.BadRequest(new { success = false, message = $"Password changed UnSuccessfully {Email}" });
             }
             catch (Exception e)
             {
-                return BadRequest(new { success = false, e.Message });
+                throw e;
             }
         }
         [HttpGet("getallusers")]
