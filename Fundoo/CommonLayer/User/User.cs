@@ -11,7 +11,7 @@ namespace CommonLayer.User
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
-        public int UserId { get; set; } 
+        public  int UserId { get; set; } 
 
         [Required]
         public string fName { get; set; }

@@ -8,8 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
+
 namespace FundooNotes.Controllers
-{
+{   
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
@@ -42,7 +43,7 @@ namespace FundooNotes.Controllers
             {
                 string result = this.userBL.Login(login);
                 if (result != null)
-                    return this.Ok(new { success = true, message = $"LogIn Successful {login.email}, Token = {result}" });
+                    return this.Ok(new { success = true, message = $"LogIn Successful  {login.email}" });
                 else
                     return this.BadRequest(new { Success = false, message = "Invalid Username and Password" });
             }
@@ -53,62 +54,83 @@ namespace FundooNotes.Controllers
         }
 
 
-        [HttpPut("ForgotPassword")]
-        public IActionResult ForgotPassword(string email)
+        [HttpPost("forgotpassword")]
+        public IActionResult ForgotPassword(ForgotUserModel validate)
         {
             
             try
             {
-              this.userBL.ForgotPassword(email);              
-                return this.Ok(new { success = true, message = $"Token generated.Please check your email" });              
+                var result = fundooDbContext.User.FirstOrDefault(x => x.email == validate.email);
+                if(result==null)
+                {
+                    return BadRequest(new { success = false, Message="Email is invalid" });
+                }
+                else
+                {
+                    this.userBL.ForgotPassword(validate);
+                    return this.Ok(new { success = true, message = $"Token generated.Please check your email" });
+                }
+                           
             }
             catch (Exception e)
             {
-                return BadRequest(new { success = false, e.Message });
+                throw e;
             }
 
         }
-        [AllowAnonymous]
-        [HttpPut("Reset Password")]
-        public ActionResult ResetPassword(string Email, string Password, string cpassword)
+
+        [Authorize]
+        [HttpPut("resetpassword")]
+        public ActionResult ResetPassword(validations validate)
         {
             try
             {
-                if (Password != cpassword)
+                if (validate.password != validate.cPassword)
                 {
                     return this.BadRequest(new { success = false, message = $"Passwords are not same" });
                 }
-                var Identity = User.Identity as ClaimsIdentity;
-                //var UserEmailObject = User.Claims.First(x => x.Type == "Email").Value;
-                if (Identity != null)
+                var identity=User.Identity as ClaimsIdentity;
+
+                if (identity != null)
                 {
-                    IEnumerable<Claim> claims = Identity.Claims;
+                    IEnumerable<Claim> claims = identity.Claims;
                     var UserEmailObject = claims.Where(p => p.Type == @"http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").FirstOrDefault()?.Value;
-                    this.userBL.ResetPassword(UserEmailObject, Password, cpassword);
-                    return Ok(new { success = true, message = "Password Changed Sucessfully", email = $"{Email}" });
+                    if (UserEmailObject != null)
+                    {
+                        this.userBL.ResetPassword(UserEmailObject, validate);
+
+                        return Ok(new { success = true, message = "Password Reset succesfully" });
+                    }
+                    else
+                    {
+                        return Ok(new { success = false, message = "Email is not Authorized" });
+                    }
                 }
-
-                //  this.userBL.ResetPassword(UserEmailObject, Password, cpassword);
-                return this.BadRequest(new { success = false, message = $"Password changed UnSuccessfully {Email}" });
-            }
+                    return this.BadRequest(new { success = false, message = "Password Reset unsuccesfully" });
+                }
             catch (Exception e)
             {
                 throw e;
             }
         }
+
+        
+
+
         [HttpGet("getallusers")]
-        public ActionResult GetAllUsers()
-        {
-            try
+            public ActionResult GetAllUsers()
             {
-                var result = this.userBL.GetAllUsers();
-                return this.Ok(new { success = true, message = $"Below are the User data", data = result });
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+                try
+                {
+                    var result = this.userBL.GetAllUsers();
+                    return this.Ok(new { success = true, message = $"Below are the User data", data = result });
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+                //hindhusrii
 
-        }
+            }
     }
 }

@@ -12,8 +12,8 @@ namespace BusinessLayer.Interface
         void RegisterUser(UserPostModel userPostModel);
         string Login(UserLogin login);
 
-        bool ForgotPassword(string email);
-        void ResetPassword(string email, string password, string cPassword);
+        bool ForgotPassword(ForgotUserModel validate);
+        void ResetPassword(string email,validations validate);
 
         List<User> GetAllUsers();
     }

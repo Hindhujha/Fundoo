@@ -1,4 +1,5 @@
-﻿using CommonLayer.User;
+﻿
+using CommonLayer.User;
 using RepositoryLayer.Services;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,9 @@ namespace RepositoryLayer.Interface
 
         public string login (UserLogin userLogin);
 
-        public bool ForgotPassword(string email);
+        public bool ForgotPassword(ForgotUserModel validate);
 
-        public void ResetPassword(string email, string password, string cPassword);
+        public void ResetPassword(string email,validations validate);
 
         List<User> GetAllUsers();
 

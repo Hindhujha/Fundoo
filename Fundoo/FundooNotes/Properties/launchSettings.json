@@ -1,17 +1,18 @@
 {
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
-    "windowsAuthentication": true,
-    "anonymousAuthentication": false,
-    "iis": {
-      "applicationUrl": "http://localhost/FundooNotes",
-      "sslPort": 0
-    },
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    //"iis": {
+    //  "applicationUrl": "http://localhost/FundooNotes",
+    //  "sslPort": 0
+    //},
     "iisExpress": {
       "applicationUrl": "http://localhost:58607",
       "sslPort": 44388
     }
   },
-  "$schema": "http://json.schemastore.org/launchsettings.json",
+
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
@@ -24,7 +25,8 @@
     "FundooNotes": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "swagger",
+      "launchUrl": "FundooNotes",
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
