@@ -17,8 +17,7 @@ namespace RepositoryLayer.Services
     public class UserRL : IUserRL
     {
         FundooDbContext dbContext;
-
-        private readonly IConfiguration configuration;
+       
         public UserRL(FundooDbContext dbContext)
         {
             this.dbContext = dbContext;
@@ -126,7 +125,7 @@ namespace RepositoryLayer.Services
             return tokenHandler.WriteToken(token);
         }
 
-     //   validations validate = new validations();
+
 
         public bool ForgotPassword(ForgotUserModel validate)
         {
@@ -182,7 +181,7 @@ namespace RepositoryLayer.Services
         {   
             try
             {
-                   // User user = new User();
+             
                     var result = dbContext.User.FirstOrDefault(a => a.email == email);
                     if (result != null)
                     {
@@ -212,20 +211,6 @@ namespace RepositoryLayer.Services
             }
         }
 
-        //public string ClaimTokenByID(long Id)
-        //{
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    var key = Encoding.ASCII.GetBytes(configuration["THIS_IS_MY_KEY_TO_GENERATE_TOKEN"]);
-        //    var tokenDescriptor = new SecurityTokenDescriptor
-        //    {
-        //        Subject = new ClaimsIdentity(new[] { new Claim("userId", Id.ToString()) }),
-        //        Expires = DateTime.UtcNow.AddHours(1),
-        //        SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        //    };
-        //    var token = tokenHandler.CreateToken(tokenDescriptor);
-        //    return tokenHandler.WriteToken(token);
-        //}
-
         private void msmqQueue_ReceiveCompleted(object sender, ReceiveCompletedEventArgs e)
         {
             try
@@ -244,7 +229,7 @@ namespace RepositoryLayer.Services
                     Console.WriteLine("Access is denied. " +
                         "Queue might be a system queue.");
                 }
-                // Handle other sources of MessageQueueException.
+                
             }
         }
 
