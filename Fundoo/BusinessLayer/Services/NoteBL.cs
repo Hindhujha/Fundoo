@@ -29,5 +29,101 @@ namespace BusinessLayer.Services
                 throw e;
             }
         }
+
+        public bool UpdateNotes(int NotesId, NotePostModel notePost)
+        {
+            try
+            {
+                if (noteRL.UpdateNotes(NotesId, notePost))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public IEnumerable<Note> GetAllNotes()
+        {
+
+            try
+            {
+                return noteRL.GetAllNotes();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+        public bool DeleteNote(int NotesId)
+        {
+            try
+            {
+                if (noteRL.DeleteNote(NotesId))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<List<Note>> changeColor(int NotesId, string Color)
+        {
+            try
+            {
+                return await noteRL.changeColor(NotesId, Color);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task ArchieveNote(int NotesId)
+        {
+            try
+            {
+                await noteRL.ArchieveNote(NotesId);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task Pin(int NotesId)
+        {
+            try
+            {
+                await noteRL.Pin(NotesId);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public async Task Trash(int NotesId)
+        {
+            try
+            {
+                await noteRL.Trash(NotesId);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
+
+
 }

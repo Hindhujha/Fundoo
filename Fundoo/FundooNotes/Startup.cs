@@ -1,3 +1,4 @@
+using System;
 using BusinessLayer.Interface;
 using BusinessLayer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,8 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RepositoryLayer.Interface;
 using RepositoryLayer.Services;
-using System;
 using System.Text;
+
 
 namespace FundooNotes
 {
@@ -28,34 +29,45 @@ namespace FundooNotes
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<FundooDbContext>(opts => opts.UseSqlServer(Configuration["ConnectionStrings:FundooNotes"]));
             services.AddControllers();
-            services.AddDbContext<FundooDbContext>(opts => opts.UseSqlServer(Configuration["ConnectionStrings:FundooNotes"]));//fundoo is a key not database      
-            services.AddSwaggerGen(
-            setup =>
+            //adds swagger generator to the services collection
+
+            services.AddSwaggerGen(c =>
             {
                 // Include 'SecurityScheme' to use JWT Authentication
-                var jwtSecurityScheme = new OpenApiSecurityScheme
+
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyProject", Version = "v1.0.0" });
+                var securitySchema = new OpenApiSecurityScheme
                 {
-                    Scheme = "bearer",
-                    BearerFormat = "JWT",
-                    Name = "JWT Authentication",
+                    Description = "Using the Authorization header with the Bearer scheme.",
+                    Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
-                    Description = "Put *ONLY* your JWT Bearer token on textbox below!",
+                    Scheme = "bearer",
                     Reference = new OpenApiReference
                     {
-                        Id = JwtBearerDefaults.AuthenticationScheme,
-                        Type = ReferenceType.SecurityScheme
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
                     }
                 };
 
-                setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
-                setup.AddSecurityRequirement(new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } });
+                c.AddSecurityDefinition("Bearer", securitySchema);
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                     { securitySchema, new[] { "Bearer" } }
+                });
+
+                //setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+                //setup.AddSecurityRequirement(new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } });
             });
+            //services.AddTransient<IUserBL,UserBL>();
             services.AddTransient<IUserBL, UserBL>();
             services.AddTransient<IUserRL, UserRL>();
-
-            services.AddDataProtection();
+            services.AddTransient<INoteBL, NoteBL>();
+            services.AddTransient<INoteRL, NoteRL>();
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -78,21 +90,24 @@ namespace FundooNotes
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-                
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            //add swagger middleware to the HTTP proccessing pipeline
+            //This middleware set the generated swagger document as a jason end point
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "FundooNotes");
             });
-            app.UseHttpsRedirection();
-           
-            app.UseRouting();
-            app.UseAuthorization();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
             app.UseAuthentication();
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

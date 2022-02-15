@@ -19,13 +19,15 @@ namespace RepositoryLayer.Services
         protected override void
         OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<User>()
                .HasIndex(u => u.email)
                .IsUnique();
 
-            modelBuilder.Entity<Note>()
-                .HasOne(u => u.User).WithMany()
-                .HasForeignKey(u=>u.UserId);
+            //modelBuilder.Entity<Note>()
+            ////.HasOne(u => u.User).WithMany()
+            ////.HasForeignKey(u=>u.UserId);
+            //.HasKey(x => new { x.NotesId, x.UserId });
         }
     }
 

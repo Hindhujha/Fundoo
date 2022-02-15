@@ -43,7 +43,7 @@ namespace FundooNotes.Controllers
             {
                 string result = this.userBL.Login(login);
                 if (result != null)
-                    return this.Ok(new { success = true, message = $"LogIn Successful  {login.email}" });
+                    return this.Ok(new { success = true, message = $"LogIn Successful  {login.email},token = {result}" });
                 else
                     return this.BadRequest(new { Success = false, message = "Invalid Username and Password" });
             }
@@ -129,7 +129,7 @@ namespace FundooNotes.Controllers
                 {
                     throw e;
                 }
-                //hindhusrii
+              
 
             }
     }

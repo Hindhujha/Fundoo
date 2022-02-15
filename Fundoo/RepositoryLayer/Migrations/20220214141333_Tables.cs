@@ -8,27 +8,6 @@ namespace RepositoryLayer.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "User",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    fName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    lName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    phNo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    email = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    cPassword = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    registeredDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    modifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User", x => x.UserId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Note",
                 columns: table => new
                 {
@@ -48,18 +27,28 @@ namespace RepositoryLayer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Note", x => x.NotesId);
-                    table.ForeignKey(
-                        name: "FK_Note_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Note_UserId",
-                table: "Note",
-                column: "UserId");
+            migrationBuilder.CreateTable(
+                name: "User",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    fName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    lName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    phNo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    email = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    cPassword = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    registeredDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    modifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.UserId);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_User_email",

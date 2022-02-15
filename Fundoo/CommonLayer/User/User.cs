@@ -28,5 +28,7 @@ namespace CommonLayer.User
         public DateTime registeredDate { get; set; }
         public DateTime modifiedDate { get; set; }
 
+        //public ICollection<Notes.Note> notes { get; set; }
+
     }
 }

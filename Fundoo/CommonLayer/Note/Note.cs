@@ -24,6 +24,6 @@ namespace CommonLayer.Notes
         public bool IsPin { get; set; }
         public bool IsTrash { get; set; }
 
-        public virtual User.User User { get; set; }
+        //public virtual User.User User { get; set; }
     }
 }
