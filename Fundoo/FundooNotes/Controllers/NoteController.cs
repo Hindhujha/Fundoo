@@ -34,9 +34,7 @@ namespace FundooNotes.Controllers
         {
             try
             {
-                //var Userid = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserId", StringComparison.InvariantCultureIgnoreCase));
-                //int userid = Int32.Parse(Userid.Value);
-
+              
                  await this.noteBL.AddNote(UserId, notePost);
 
                 return this.Ok(new { success = true, message = $"Note Created Sucessfully " });
@@ -50,19 +48,7 @@ namespace FundooNotes.Controllers
                 throw ex;
             }
         }
-        //[HttpPost("register")]
-        //public ActionResult AddNote(int UserId,NotePostModel notePost)
-        //{
-        //    try
-        //    {
-        //        this.noteBL.AddNote(UserId,notePost);
-        //        return this.Ok(new { success = true, message = $"Note Created Sucessfully" });
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        throw e;
-        //    }
-        //}
+     
         [Authorize]
         [HttpPut("updatenote/{notesId}")]
         public IActionResult UpdateNotes(int NotesId, NotePostModel notePost)
