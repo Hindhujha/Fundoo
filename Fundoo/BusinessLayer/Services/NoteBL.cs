@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interface;
 using CommonLayer.Notes;
+using RepositoryLayer.Entities;
 using RepositoryLayer.Interface;
 using System;
 using System.Collections.Generic;

@@ -8,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Experimental.System.Messaging;
-
+using RepositoryLayer.Entities;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Configuration;
 

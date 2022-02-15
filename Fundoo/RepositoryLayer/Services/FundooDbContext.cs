@@ -2,10 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using CommonLayer;
-using CommonLayer.User;
-using CommonLayer.Notes;
-
+using RepositoryLayer.Entities;
 namespace RepositoryLayer.Services
 {
     public class FundooDbContext:DbContext

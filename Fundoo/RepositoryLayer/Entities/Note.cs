@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 
-namespace CommonLayer.Notes
+namespace RepositoryLayer.Entities
 {
    public class Note
     {

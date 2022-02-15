@@ -1,5 +1,5 @@
 ﻿using BusinessLayer.Interface;
-using CommonLayer.Notes;
+using RepositoryLayer.Entities;
 using CommonLayer.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,14 +10,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using BusinessLayer.Services;
+using CommonLayer.Notes;
 
 namespace FundooNotes.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class NoteController : ControllerBase
-    {       
+    {
         FundooDbContext fundooDbContext;
+           
         INoteBL noteBL;
         public NoteController(INoteBL NoteBL,FundooDbContext fundooDb)
         {
@@ -26,7 +28,7 @@ namespace FundooNotes.Controllers
         }
 
 
-        //  [Authorize]
+         [Authorize]
         [HttpPost("addnotes")]
         public async Task<ActionResult> AddNote(int UserId,NotePostModel notePost)
         {
@@ -62,7 +64,7 @@ namespace FundooNotes.Controllers
         //    }
         //}
         [Authorize]
-        [HttpPut("updatenote")]
+        [HttpPut("updatenote/{notesId}")]
         public IActionResult UpdateNotes(int NotesId, NotePostModel notePost)
         {
             try
@@ -97,7 +99,7 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpDelete]
+        [HttpDelete("deleteNote/{notesId}")]
         public IActionResult DeleteNote(int NotesId)
         {
             try
@@ -120,7 +122,7 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpPut("{noteID}/{color}")]
+        [HttpPut("changecolor/{notesId}/{color}")]
         public async Task<IActionResult> changeColor(int NotesId, string Color)
         {
             try
@@ -143,7 +145,7 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpPut("{noteID}")]
+        [HttpPut("archivenote/{notesId}")]
         public async Task<IActionResult> IsArchieve(int NotesId)
         {
             try
@@ -160,7 +162,7 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpPut("{noteID}")]
+        [HttpPut("pin/{notesId}")]
         public async Task<IActionResult> Pin(int NotesId)
         {
             try
@@ -176,7 +178,7 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
-        [HttpPut("{noteID}")]
+        [HttpPut("trash/{notesId}")]
         public async Task<IActionResult> Trash(int NotesId)
         {
             try

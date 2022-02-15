@@ -1,4 +1,5 @@
 ﻿using CommonLayer.User;
+using RepositoryLayer.Entities;
 using RepositoryLayer.Services;
 using System;
 using System.Collections.Generic;

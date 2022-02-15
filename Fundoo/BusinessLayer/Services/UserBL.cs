@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interface;
 using CommonLayer.User;
+using RepositoryLayer.Entities;
 using RepositoryLayer.Interface;
 using RepositoryLayer.Services;
 using System;
