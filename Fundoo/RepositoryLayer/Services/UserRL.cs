@@ -62,10 +62,10 @@ namespace RepositoryLayer.Services
                 User user = new User();
            
                 var result = dbContext.User.Where(x => x.email == userLogin.email && x.password == userLogin.password).FirstOrDefault();
-               
+                int Id = result.UserId;
                 if (result != null)
                 {
-                    return GenerateJWTToken(userLogin.email, user.UserId);
+                    return GenerateJWTToken(userLogin.email, Id);
                 }
                 else
                 {

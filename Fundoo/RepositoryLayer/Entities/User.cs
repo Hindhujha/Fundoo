@@ -7,7 +7,7 @@ using System.Text;
 namespace RepositoryLayer.Entities
 {
    public class User
-    {
+   {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
@@ -28,7 +28,7 @@ namespace RepositoryLayer.Entities
         public DateTime registeredDate { get; set; }
         public DateTime modifiedDate { get; set; }
 
-        //public ICollection<Notes.Note> notes { get; set; }
+    
 
     }
 }

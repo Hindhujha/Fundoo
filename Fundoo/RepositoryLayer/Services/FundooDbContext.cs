@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using RepositoryLayer.Entities;
+
 namespace RepositoryLayer.Services
 {
     public class FundooDbContext:DbContext
@@ -13,6 +14,10 @@ namespace RepositoryLayer.Services
         }
         public DbSet<User> User { get; set; }
         public DbSet<Note> Note { get; set; }
+
+        public DbSet<Label> Label { get; set; }
+
+
         protected override void
         OnModelCreating(ModelBuilder modelBuilder)
         {

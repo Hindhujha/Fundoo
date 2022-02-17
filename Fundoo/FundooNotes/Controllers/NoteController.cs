@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 using System.Security.Claims;
 using BusinessLayer.Services;
 using CommonLayer.Notes;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace FundooNotes.Controllers
 {
@@ -19,38 +23,43 @@ namespace FundooNotes.Controllers
     public class NoteController : ControllerBase
     {
         FundooDbContext fundooDbContext;
-           
+        private readonly IMemoryCache memoryCache;
+        private readonly IDistributedCache distributedCache;
+        
         INoteBL noteBL;
-        public NoteController(INoteBL NoteBL,FundooDbContext fundooDb)
+        public NoteController(INoteBL NoteBL,FundooDbContext fundooDb, IMemoryCache memoryCache, IDistributedCache distributedCache)
         {
             this.noteBL = NoteBL;
             this.fundooDbContext = fundooDb;
+            this.memoryCache = memoryCache;
+            this.distributedCache = distributedCache;
         }
 
 
-         [Authorize]
-        [HttpPost("addnotes")]
-        public async Task<ActionResult> AddNote(int UserId,NotePostModel notePost)
+        [Authorize]
+        [HttpPost("addNotes")]
+        public async Task<IActionResult> AddNote(NotePostModel notePost)
         {
             try
             {
-              
-                 await this.noteBL.AddNote(UserId, notePost);
+                var userId = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userId", StringComparison.InvariantCultureIgnoreCase));
+                int UserId = Int32.Parse(userId.Value);
 
-                return this.Ok(new { success = true, message = $"Note Created Sucessfully " });
+                //  int userid = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "UserId").Value);
 
-                
+                await this.noteBL.AddNote(UserId, notePost);
 
 
+                return this.Ok(new { success = true, Message = $"Registration is successfull" });
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                throw ex;
+                 throw e;
             }
         }
-     
+
         [Authorize]
-        [HttpPut("updatenote/{notesId}")]
+        [HttpPut("updatenote/{NotesId}")]
         public IActionResult UpdateNotes(int NotesId, NotePostModel notePost)
         {
             try
@@ -71,21 +80,37 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpGet("getallnotes")]
-        public IEnumerable<Note> GetAllNotes()
+        [HttpGet("getAllNoteusingRedis")]
+        public async Task<IActionResult> GetAllNotes()
         {
             try
             {
-                return noteBL.GetAllNotes();
+                var cacheKey = "NoteList";
+                string serializedNoteList;
+                var noteList = new List<Note>();
+                var redisnoteList = await distributedCache.GetAsync(cacheKey);
+                if (redisnoteList != null)
+                {
+                    serializedNoteList = Encoding.UTF8.GetString(redisnoteList);
+                    noteList = JsonConvert.DeserializeObject<List<Note>>(serializedNoteList);
+                }
+                else
+                {
+                    noteList = await noteBL.GetAllNotes();
+                    serializedNoteList = JsonConvert.SerializeObject(noteList);
+                    redisnoteList = Encoding.UTF8.GetBytes(serializedNoteList);
+                }
+                return this.Ok(noteList);
+
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
-                throw e;
+                throw;
             }
         }
         [Authorize]
-        [HttpDelete("deleteNote/{notesId}")]
+        [HttpDelete("deleteNote/{NotesId}")]
         public IActionResult DeleteNote(int NotesId)
         {
             try
@@ -108,7 +133,7 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpPut("changecolor/{notesId}/{color}")]
+        [HttpPut("changecolor/{NotesId}/{Color}")]
         public async Task<IActionResult> changeColor(int NotesId, string Color)
         {
             try
@@ -131,7 +156,7 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpPut("archivenote/{notesId}")]
+        [HttpPut("archivenote/{NotesId}")]
         public async Task<IActionResult> IsArchieve(int NotesId)
         {
             try
@@ -148,7 +173,7 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpPut("pin/{notesId}")]
+        [HttpPut("pin/{NotesId}")]
         public async Task<IActionResult> Pin(int NotesId)
         {
             try
@@ -164,7 +189,7 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
-        [HttpPut("trash/{notesId}")]
+        [HttpPut("trash/{NotesId}")]
         public async Task<IActionResult> Trash(int NotesId)
         {
             try
@@ -176,6 +201,26 @@ namespace FundooNotes.Controllers
             {
 
                 throw e;
+            }
+        }
+
+        [Authorize]
+        [HttpGet("getAllNotes")]
+        public async Task<IActionResult> GetAllNotes()
+        {
+            try
+            {
+                int userid = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "userId").Value);
+                var noteList = new List<Note>();
+                noteList = await noteBL.GetAllNotes(userid);
+
+                return this.Ok(new { Success = true, message = $"GetAll note successfull ", data = noteList });
+
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
 

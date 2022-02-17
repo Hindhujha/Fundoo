@@ -13,7 +13,11 @@ namespace RepositoryLayer.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Required]
         public int NotesId { get; set; }    
-        public int UserId { get; set; }       
+
+        [ForeignKey("User")]
+        public int? UserId { get; set; }
+        public virtual User User { get; set; }
+
         public string Title { get; set; }
         public string Description { get; set; }
         public bool  IsRemainder { get; set; }    
@@ -23,7 +27,6 @@ namespace RepositoryLayer.Entities
         public bool IsArchive { get; set; }
         public bool IsPin { get; set; }
         public bool IsTrash { get; set; }
-
-        //public virtual User.User User { get; set; }
-    }
+    
+   }
 }
