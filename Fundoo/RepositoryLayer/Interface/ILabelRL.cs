@@ -11,11 +11,9 @@ namespace RepositoryLayer.Interface
    {
         Task<List<Label>> CreateLabel(LabelPostModel labelModel, int NotesId, int UserId);
 
-        public IEnumerable<Label> GetLabelsByNoteID(int UserId, int NotesId);
+        public bool UpdateLabel(int LabelId, LabelPostModel labelPost);
+        public bool DeleteLabel(int LabelId);
 
-        public bool RenameLabel(int UserId, string OldLabelName, string LabelName);
-        public bool RemoveLabel(int UserId, string LabelName);
-
-      
+        Task<List<Label>> GetAllDatas(int UserId);
     }
 }

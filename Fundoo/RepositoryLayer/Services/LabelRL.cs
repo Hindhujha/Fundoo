@@ -45,29 +45,46 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public IEnumerable<Label> GetLabelsByNoteID(int UserId, int NotesId)
+      
+        public bool UpdateLabel(int LabelId, LabelPostModel labelPost)
         {
-            try
-            {
-                var result = dbContext.Label.Where(e => e.NotesId == NotesId && e.UserId == UserId).ToList();
-                if (result != null)
-                {
-                    return result;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception)
-            {
+            Label label = dbContext.Label.Where(e => e.LabelId == LabelId).FirstOrDefault();         
+            label.LabelName = labelPost.LabelName;
+            dbContext.Label.Update(label);
+            var result = dbContext.SaveChangesAsync();
+            if (result != null)
+                return true;
+            else
+                return false;
 
-                throw;
-            }
         }
 
 
+        public bool DeleteLabel(int LabelId)
+        {
+            Label label = dbContext.Label.Where(e => e.LabelId == LabelId).FirstOrDefault();
+            if (label != null)
+            {
+                dbContext.Label.Remove(label);
+                dbContext.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task<List<Label>> GetAllDatas(int NotesId)
+        {
+
+            return await dbContext.Label.Where(u => u.NotesId == NotesId)
+
+               .Include(u => u.Note)
+               .Include(u=>u.User)
+               .ToListAsync();
+        }
 
     }
-   
+
 }

@@ -40,33 +40,29 @@ namespace FundooNotes
 
             services.AddControllers();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyProject", Version = "v1.0.0" });
+            services.AddSwaggerGen(
+                      setup =>
+                      {
+                         // Include 'SecurityScheme' to use JWT Authentication
+                         var jwtSecurityScheme = new OpenApiSecurityScheme
+                          {
+                              Scheme = "bearer",
+                              BearerFormat = "JWT",
+                              Name = "JWT Authentication",
+                              In = ParameterLocation.Header,
+                              Type = SecuritySchemeType.Http,
+                              Description = "Put *ONLY* your JWT Bearer token on textbox below!",
+                              Reference = new OpenApiReference
+                              {
+                                  Id = JwtBearerDefaults.AuthenticationScheme,
+                                  Type = ReferenceType.SecurityScheme
+                              },
+                          };
+                          setup.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
 
-              
-                var securitySchema = new OpenApiSecurityScheme
-                {
-                    Description = "Using the Authorization header with the Bearer scheme.",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                };
+                          setup.AddSecurityRequirement(new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } });
+                      });
 
-                c.AddSecurityDefinition("Bearer", securitySchema);
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-              { securitySchema, new[] { "Bearer" } }
-                });
-               
-            });
             //services.AddTransient<IUserBL,UserBL>();
             services.AddTransient<IUserBL, UserBL>();
             services.AddTransient<IUserRL, UserRL>();

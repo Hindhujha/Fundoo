@@ -79,36 +79,36 @@ namespace FundooNotes.Controllers
                 throw e;
             }
         }
-        [Authorize]
-        [HttpGet("getAllNoteusingRedis")]
-        public async Task<IActionResult> GetAllNotes()
-        {
-            try
-            {
-                var cacheKey = "NoteList";
-                string serializedNoteList;
-                var noteList = new List<Note>();
-                var redisnoteList = await distributedCache.GetAsync(cacheKey);
-                if (redisnoteList != null)
-                {
-                    serializedNoteList = Encoding.UTF8.GetString(redisnoteList);
-                    noteList = JsonConvert.DeserializeObject<List<Note>>(serializedNoteList);
-                }
-                else
-                {
-                    noteList = await noteBL.GetAllNotes();
-                    serializedNoteList = JsonConvert.SerializeObject(noteList);
-                    redisnoteList = Encoding.UTF8.GetBytes(serializedNoteList);
-                }
-                return this.Ok(noteList);
+        //[Authorize]
+        //[HttpGet("getAllNoteusingRedis")]
+        //public async Task<IActionResult> GetAllNotes()
+        //{
+        //    try
+        //    {
+        //        var cacheKey = "NoteList";
+        //        string serializedNoteList;
+        //        var noteList = new List<Note>();
+        //        var redisnoteList = await distributedCache.GetAsync(cacheKey);
+        //        if (redisnoteList != null)
+        //        {
+        //            serializedNoteList = Encoding.UTF8.GetString(redisnoteList);
+        //            noteList = JsonConvert.DeserializeObject<List<Note>>(serializedNoteList);
+        //        }
+        //        else
+        //        {
+        //            noteList = await noteBL.GetAllNotes();
+        //            serializedNoteList = JsonConvert.SerializeObject(noteList);
+        //            redisnoteList = Encoding.UTF8.GetBytes(serializedNoteList);
+        //        }
+        //        return this.Ok(noteList);
 
-            }
-            catch (Exception)
-            {
+        //    }
+        //    catch (Exception)
+        //    {
 
-                throw;
-            }
-        }
+        //        throw;
+        //    }
+        //}
         [Authorize]
         [HttpDelete("deleteNote/{NotesId}")]
         public IActionResult DeleteNote(int NotesId)

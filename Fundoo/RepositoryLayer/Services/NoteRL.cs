@@ -63,10 +63,10 @@ namespace RepositoryLayer.Services
 
         public async Task<List<Note>> GetAllNotes(int UserId)
         {
-           
+
             return await dbContext.Note.Where(u => u.UserId == UserId)
 
-               .Include(u => u.User.UserId)
+               .Include(u => u.User)
                .ToListAsync();
         }
 

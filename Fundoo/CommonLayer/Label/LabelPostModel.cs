@@ -10,8 +10,6 @@ namespace CommonLayer.LabelModel
         [Required]
         public string LabelName { get; set; }
 
-        [Required]
-        public int LabelId { get; set; }
-       
+      
     }
 }

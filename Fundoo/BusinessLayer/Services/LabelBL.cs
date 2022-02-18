@@ -28,17 +28,53 @@ namespace BusinessLayer.Services
             }
         }
 
-        public IEnumerable<Label> GetLabelsByNoteID(int UserId, int NotesId)
+
+        public bool UpdateLabel(int LabelId, LabelPostModel labelPost)
         {
             try
             {
-                return labelRL.GetLabelsByNoteID(UserId, NotesId);
+                if (labelRL.UpdateLabel(LabelId, labelPost))
+                    return true;
+                else
+                    return false;
             }
             catch (Exception)
             {
 
                 throw;
             }
+        }
+
+     
+        public bool DeleteLabel(int LabelId)
+        {
+            try
+            {
+                if (labelRL.DeleteLabel(LabelId))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+        }
+
+        public async Task<List<Label>> GetAllDatas(int UserId)
+        {
+
+            try
+            {
+                return await labelRL.GetAllDatas(UserId);
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+
         }
     }
 }
