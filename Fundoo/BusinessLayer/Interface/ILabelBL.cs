@@ -1,6 +1,7 @@
 ﻿using CommonLayer.LabelModel;
 using RepositoryLayer.Entities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,5 +19,7 @@ namespace BusinessLayer.Interface
 
 
         Task<List<Label>> GetAllDatas(int UserId);
+
+        Task<List<Label>> GetAllLabelsByNoteId(int NotesId, int UserId);
     }
 }

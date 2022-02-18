@@ -3,6 +3,7 @@ using CommonLayer.LabelModel;
 using RepositoryLayer.Entities;
 using RepositoryLayer.Interface;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -76,5 +77,21 @@ namespace BusinessLayer.Services
             }
 
         }
+
+        public async Task<List<Label>> GetAllLabelsByNoteId(int NoteId,int UserId)
+        {
+
+            try
+            {
+                return await labelRL.GetAllLabelsByNoteId(NoteId,UserId);
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+
+        }
+
     }
 }

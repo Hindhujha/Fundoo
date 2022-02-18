@@ -85,6 +85,16 @@ namespace RepositoryLayer.Services
                .ToListAsync();
         }
 
+        public async Task<List<Label>> GetAllLabelsByNoteId(int NoteId,int UserId)
+        {
+
+            return await dbContext.Label.Where(u => u.UserId == UserId && u.NotesId == NoteId)
+
+               .Include(u => u.User)
+               .Include(u=>u.Note)
+               .ToListAsync();
+        }
+
     }
 
 }

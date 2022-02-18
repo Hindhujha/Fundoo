@@ -26,7 +26,7 @@ namespace FundooNotes.Controllers
             this.fundooDbContext = fundooDbContext;
         }
         [Authorize]
-        [HttpPost]
+        [HttpPost("createlabels/{NotesId}")]
         public async Task<IActionResult> CreateLabel(LabelPostModel labelModel, int NotesId)
         {
             try
@@ -97,7 +97,7 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpGet(" GetAllLabels")]
+        [HttpGet(" getallLabels")]
         public async Task<IActionResult> GetAllLabels()
         {
 
@@ -108,12 +108,39 @@ namespace FundooNotes.Controllers
                 var LabelList = new List<Label>();
                 var NoteList = new List<Note>();
                 LabelList = await labelBL.GetAllDatas(userID);
-                //NoteList = await noteBL.GetAllNotes(userID);
-
+             
 
                 return this.Ok(new { Success = true, message = $"GetAll Labels of UserId={userID} ", data = LabelList });
                 return this.Ok(new { Success = true, message = $"GetAll Notes of UserId={userID} ", data = NoteList });
 
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        [Authorize]
+        [HttpGet("getAllLabelsbyNoteId/{NoteId}")]
+        public async Task<IActionResult> GetAllLabelsByNoteId(int NoteId)
+        {
+            try
+            {
+                int userid = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "userId").Value);
+
+            
+              //  var userList = new List<User>();
+                var LabelList = new List<Label>();
+                var noteList = new List<Note>();
+                LabelList = await labelBL.GetAllLabelsByNoteId(NoteId, userid);
+
+
+                //   return this.Ok(new { Success = true, message = $"GetAll note successfull ", data = userList });
+                return this.Ok(new { Success = true, message = $"GetAll Labels successfull ", data = LabelList });
+
+                return this.Ok(new { Success = true, message = $"Note datas are: " , data = noteList});
 
             }
             catch (Exception)

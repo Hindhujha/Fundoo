@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
+
+namespace CommonLayer.UserAddressPostModel
+{
+    public class UserAddressPostModel
+    {
+
+     
+        [Required]
+        public string Type { get; set; }
+
+        [Required]
+        public string Address { get; set; }
+
+        [Required]
+        public string State { get; set; }
+
+        [Required]
+        public string City { get; set; }
+
+
+       
+    }
+}

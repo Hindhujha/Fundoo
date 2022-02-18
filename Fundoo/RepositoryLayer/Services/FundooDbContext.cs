@@ -25,11 +25,6 @@ namespace RepositoryLayer.Services
             modelBuilder.Entity<User>()
                .HasIndex(u => u.email)
                .IsUnique();
-
-            //modelBuilder.Entity<Note>()
-            ////.HasOne(u => u.User).WithMany()
-            ////.HasForeignKey(u=>u.UserId);
-            //.HasKey(x => new { x.NotesId, x.UserId });
         }
     }
 
