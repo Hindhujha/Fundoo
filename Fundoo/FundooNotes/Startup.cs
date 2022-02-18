@@ -38,7 +38,10 @@ namespace FundooNotes
             });
             //adds swagger generator to the services collection
 
-            services.AddControllers();
+            // services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+           );
 
             services.AddSwaggerGen(
                       setup =>
@@ -63,13 +66,15 @@ namespace FundooNotes
                           setup.AddSecurityRequirement(new OpenApiSecurityRequirement { { jwtSecurityScheme, Array.Empty<string>() } });
                       });
 
-            //services.AddTransient<IUserBL,UserBL>();
+            
             services.AddTransient<IUserBL, UserBL>();
             services.AddTransient<IUserRL, UserRL>();
             services.AddTransient<INoteBL, NoteBL>();
             services.AddTransient<INoteRL, NoteRL>();
             services.AddTransient<ILabelBL, LabelBL>();
             services.AddTransient<ILabelRL, LabelRL>();
+            services.AddTransient<IUserAddressBL, UserAddressBL>();
+            services.AddTransient<IUserAddressRL, UserAddressRL>();
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

@@ -11,6 +11,7 @@ using Experimental.System.Messaging;
 using RepositoryLayer.Entities;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 namespace RepositoryLayer.Services
 {
@@ -50,10 +51,6 @@ namespace RepositoryLayer.Services
                 throw e;
             }
         }
-
-
-       
-
 
         public string login(UserLogin userLogin)
         {
@@ -202,7 +199,7 @@ namespace RepositoryLayer.Services
         {
             try
             {
-                var result = dbContext.User.ToList();
+                var result = dbContext.User.Include(u=>u.UserAddresses).ToList();
                 return result;
             }
             catch (Exception e)

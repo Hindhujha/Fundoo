@@ -28,7 +28,7 @@ namespace RepositoryLayer.Entities
         public DateTime registeredDate { get; set; }
         public DateTime modifiedDate { get; set; }
 
-    
+        public virtual IList<UserAddress> UserAddresses { get; set; }
 
     }
 }

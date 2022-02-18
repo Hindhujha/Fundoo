@@ -23,8 +23,8 @@ namespace FundooNotes.Controllers
     public class NoteController : ControllerBase
     {
         FundooDbContext fundooDbContext;
-        private readonly IMemoryCache memoryCache;
-        private readonly IDistributedCache distributedCache;
+         private readonly IMemoryCache memoryCache;
+         private readonly IDistributedCache distributedCache;
         
         INoteBL noteBL;
         public NoteController(INoteBL NoteBL,FundooDbContext fundooDb, IMemoryCache memoryCache, IDistributedCache distributedCache)
@@ -44,8 +44,6 @@ namespace FundooNotes.Controllers
             {
                 var userId = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userId", StringComparison.InvariantCultureIgnoreCase));
                 int UserId = Int32.Parse(userId.Value);
-
-                //  int userid = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "UserId").Value);
 
                 await this.noteBL.AddNote(UserId, notePost);
 
@@ -79,36 +77,7 @@ namespace FundooNotes.Controllers
                 throw e;
             }
         }
-        //[Authorize]
-        //[HttpGet("getAllNoteusingRedis")]
-        //public async Task<IActionResult> GetAllNotes()
-        //{
-        //    try
-        //    {
-        //        var cacheKey = "NoteList";
-        //        string serializedNoteList;
-        //        var noteList = new List<Note>();
-        //        var redisnoteList = await distributedCache.GetAsync(cacheKey);
-        //        if (redisnoteList != null)
-        //        {
-        //            serializedNoteList = Encoding.UTF8.GetString(redisnoteList);
-        //            noteList = JsonConvert.DeserializeObject<List<Note>>(serializedNoteList);
-        //        }
-        //        else
-        //        {
-        //            noteList = await noteBL.GetAllNotes();
-        //            serializedNoteList = JsonConvert.SerializeObject(noteList);
-        //            redisnoteList = Encoding.UTF8.GetBytes(serializedNoteList);
-        //        }
-        //        return this.Ok(noteList);
-
-        //    }
-        //    catch (Exception)
-        //    {
-
-        //        throw;
-        //    }
-        //}
+    
         [Authorize]
         [HttpDelete("deleteNote/{NotesId}")]
         public IActionResult DeleteNote(int NotesId)
