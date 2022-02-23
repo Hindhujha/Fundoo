@@ -8,6 +8,7 @@ using RepositoryLayer.Interface;
 using Microsoft.EntityFrameworkCore;
 using CommonLayer.LabelModel;
 using CommonLayer.Label;
+using CommonLayer.Notes;
 
 namespace RepositoryLayer.Services
 {
@@ -81,21 +82,45 @@ namespace RepositoryLayer.Services
             Label labels = new Label();
             try
             {
+                //return await dbContext.Label.Where(l => l.UserId == userId)
+                //  //.Include(u => u.Note)
+                //  //.Include(u => u.User)
+                //  //.ToListAsync();
+                //  .Join(dbContext.User,
+                //l => l.UserId,
+                //u => u.UserId,
+                //(l, u) => new LabelResponse
+                //{
+                //    userId = (int)l.UserId,
+                //    email = u.email,
+                //    LabelName = l.LabelName,
+                //    fName = u.fName,
+                //    lName = u.lName,
+                //}).ToListAsync();
                 return await dbContext.Label.Where(l => l.UserId == userId)
-                  //.Include(u => u.Note)
-                  //.Include(u => u.User)
-                  //.ToListAsync();
-                  .Join(dbContext.User,
-                l => l.UserId,
-                u => u.UserId,
-                (l, u) => new LabelResponse
-                {
-                    userId = (int)l.UserId,
-                    email = u.email,
-                    LabelName = l.LabelName,
-                    fName = u.fName,
-                    lName = u.lName,
-                }).ToListAsync();
+
+                  .Join(dbContext.User
+                  .Join(dbContext.Note,
+                    u => u.UserId,
+                    n => n.UserId,
+                    (u, n) => new NoteResponse
+                    {
+                       
+                        Title = n.Title,
+                        Description = n.Description
+
+                    }),
+                   l => l.LabelName,
+                    n1 => n1.LabelName,
+                    (l, n1) => new LabelResponse
+                    {
+                        
+                        // User=l.User.UserId,
+                        fName=l.User.fName,
+                        color = n1.color,
+                        LabelName = l.LabelName,
+
+                    }).ToListAsync();
 
 
             }
