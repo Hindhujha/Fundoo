@@ -19,6 +19,10 @@ namespace RepositoryLayer.Services
 
         public DbSet<UserAddress> UserAddresses { get; set; }
 
+        public DbSet<Collab> Collab { get; set; }
+
+
+
 
         protected override void
         OnModelCreating(ModelBuilder modelBuilder)
@@ -27,7 +31,12 @@ namespace RepositoryLayer.Services
             modelBuilder.Entity<User>()
                .HasIndex(u => u.email)
                .IsUnique();
+
+            modelBuilder.Entity<UserAddress>()
+            .Property(b => b.Type)
+            .HasDefaultValue("Home");
         }
+
     }
 
 }

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RepositoryLayer.Migrations
 {
-    public partial class UserLabelNote : Migration
+    public partial class Tables : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -57,6 +57,55 @@ namespace RepositoryLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserAddresses",
+                columns: table => new
+                {
+                    AddressId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "Home"),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAddresses", x => x.AddressId);
+                    table.ForeignKey(
+                        name: "FK_UserAddresses_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Collab",
+                columns: table => new
+                {
+                    CollabId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    collabEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NotesId = table.Column<int>(type: "int", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Collab", x => x.CollabId);
+                    table.ForeignKey(
+                        name: "FK_Collab_Note_NotesId",
+                        column: x => x.NotesId,
+                        principalTable: "Note",
+                        principalColumn: "NotesId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Collab_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Label",
                 columns: table => new
                 {
@@ -84,6 +133,16 @@ namespace RepositoryLayer.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Collab_NotesId",
+                table: "Collab",
+                column: "NotesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Collab_UserId",
+                table: "Collab",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Label_NotesId",
                 table: "Label",
                 column: "NotesId");
@@ -104,12 +163,23 @@ namespace RepositoryLayer.Migrations
                 column: "email",
                 unique: true,
                 filter: "[email] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAddresses_UserId",
+                table: "UserAddresses",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Collab");
+
+            migrationBuilder.DropTable(
                 name: "Label");
+
+            migrationBuilder.DropTable(
+                name: "UserAddresses");
 
             migrationBuilder.DropTable(
                 name: "Note");

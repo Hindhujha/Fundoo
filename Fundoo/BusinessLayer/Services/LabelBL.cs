@@ -1,4 +1,5 @@
 ﻿using BusinessLayer.Interface;
+using CommonLayer.Label;
 using CommonLayer.LabelModel;
 using RepositoryLayer.Entities;
 using RepositoryLayer.Interface;
@@ -63,7 +64,7 @@ namespace BusinessLayer.Services
             }
         }
 
-        public async Task<List<Label>> GetAllDatas(int UserId)
+        public async Task<List<LabelResponse>> GetAllDatas(int UserId)
         {
 
             try

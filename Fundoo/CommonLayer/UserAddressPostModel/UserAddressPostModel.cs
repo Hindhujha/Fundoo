@@ -8,13 +8,15 @@ namespace CommonLayer.UserAddressPostModel
 {
     public class UserAddressPostModel
     {
+        public UserAddressPostModel()
+        {
+            Type = "Home";
+            //Type = "Work";
+            //Type = "Other";
+        }
 
-     
         [Required]
         public string Type { get; set; }
-
-        [Required]
-        public string Address { get; set; }
 
         [Required]
         public string State { get; set; }

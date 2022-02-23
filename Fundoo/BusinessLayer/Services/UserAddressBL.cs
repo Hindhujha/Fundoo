@@ -17,12 +17,11 @@ namespace BusinessLayer.Services
             this.userAddressRL = userAddressRL;
         }
 
-        public async Task AddUserAddress(UserAddressPostModel userAddress, int userId)
+        public bool AddUserAddress(UserAddressPostModel userAddress, int userId)
         {
             try
             {
-                await userAddressRL.AddUserAddress(userAddress,userId);
-
+              return userAddressRL.AddUserAddress(userAddress,userId);
             }
             catch (Exception e)
             {
@@ -54,11 +53,11 @@ namespace BusinessLayer.Services
             }
         }
 
-        public async Task RemoveAddress(int AddressId)
+        public async Task RemoveAddress(int AddressId, int UserId)
         {
             try
             {
-                await userAddressRL.RemoveAddress(AddressId);
+                await userAddressRL.RemoveAddress(AddressId,UserId);
             }
             catch (Exception e)
             {

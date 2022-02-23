@@ -21,24 +21,32 @@ namespace FundooNotes.Controllers
         IUserAddressBL userAddressBL;
 
         FundooDbContext fundooDbContext;
-        public UserAddressController(IUserAddressBL userAddressBL)
+        public UserAddressController(IUserAddressBL userAddressBL, FundooDbContext fundooDbContext)
         {
             this.userAddressBL = userAddressBL;
             this.fundooDbContext = fundooDbContext;
         }
         [Authorize]
         [HttpPost("adduserAddress")]
-        public async Task<IActionResult> AddUserAddress(UserAddressPostModel userAddress)
+        public  IActionResult AddUserAddress(UserAddressPostModel userAddress)
         {
             try
             {
 
                 int userid = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "userId").Value);
 
-                await this.userAddressBL.AddUserAddress(userAddress, userid);
-
-
-                return this.Ok(new { success = true, Message = $"Address is created" });
+             
+                 bool result=this.userAddressBL.AddUserAddress(userAddress, userid);
+                if(result==false)
+                {
+                    return this.Ok(new { success = true, Message = $"Address is created" });
+                }
+                else
+                {
+                    return this.BadRequest(new { Success = false, message = "Address Type exists, it can't be added" });
+                }
+                
+              
             }
             catch (Exception e)
             {
@@ -87,14 +95,16 @@ namespace FundooNotes.Controllers
             }
         }
 
-      
+        [Authorize]
         [HttpDelete("deleteAddress/{AddressId}")]
         public async Task<IActionResult> RemoveAddress(int AddressId)
         {
             try
             {
-                
-                await this.userAddressBL.RemoveAddress(AddressId);
+                var userId = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userId", StringComparison.InvariantCultureIgnoreCase));
+                int UserId = Int32.Parse(userId.Value);
+
+                await this.userAddressBL.RemoveAddress(AddressId,UserId);
                 return this.Ok(new { Success = true, message = $"Address deleted successfully " });
 
             }

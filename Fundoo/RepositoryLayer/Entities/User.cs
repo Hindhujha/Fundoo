@@ -30,5 +30,8 @@ namespace RepositoryLayer.Entities
 
         public virtual IList<UserAddress> UserAddresses { get; set; }
 
+        public virtual IList<Note> Note { get; set; }
+        public virtual IList<Label> Label { get; set; }
+
     }
 }

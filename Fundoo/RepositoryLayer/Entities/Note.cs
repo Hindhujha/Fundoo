@@ -27,6 +27,10 @@ namespace RepositoryLayer.Entities
         public bool IsArchive { get; set; }
         public bool IsPin { get; set; }
         public bool IsTrash { get; set; }
-    
-   }
+
+        public virtual IList<Collab> Collab { get; set; }
+
+        public virtual IList<Label>   Label { get; set; }
+
+    }
 }

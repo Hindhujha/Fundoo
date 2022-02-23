@@ -9,13 +9,13 @@ namespace BusinessLayer.Interface
 { 
    public interface IUserAddressBL
     {
-        Task AddUserAddress(UserAddressPostModel userAddress, int userId);
+        public bool AddUserAddress(UserAddressPostModel userAddress, int userId);
 
         Task UpdateUserAddress(UserAddressPostModel userAddress, int userId,int AddressId);
 
         Task<List<UserAddress>> GetAllUserAddress(int UserId);
 
-        Task RemoveAddress(int AddressId);
+        Task RemoveAddress(int AddressId,int UserId);
 
 
     }

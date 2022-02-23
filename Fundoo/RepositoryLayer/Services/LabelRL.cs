@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using RepositoryLayer.Interface;
 using Microsoft.EntityFrameworkCore;
 using CommonLayer.LabelModel;
+using CommonLayer.Label;
 
 namespace RepositoryLayer.Services
 {
@@ -75,14 +76,33 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public async Task<List<Label>> GetAllDatas(int NotesId)
+        public async Task<List<LabelResponse>> GetAllDatas(int userId)
         {
+            Label labels = new Label();
+            try
+            {
+                return await dbContext.Label.Where(l => l.UserId == userId)
+                  //.Include(u => u.Note)
+                  //.Include(u => u.User)
+                  //.ToListAsync();
+                  .Join(dbContext.User,
+                l => l.UserId,
+                u => u.UserId,
+                (l, u) => new LabelResponse
+                {
+                    userId = (int)l.UserId,
+                    email = u.email,
+                    LabelName = l.LabelName,
+                    fName = u.fName,
+                    lName = u.lName,
+                }).ToListAsync();
 
-            return await dbContext.Label.Where(u => u.NotesId == NotesId)
 
-               .Include(u => u.Note)
-               .Include(u=>u.User)
-               .ToListAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public async Task<List<Label>> GetAllLabelsByNoteId(int NoteId,int UserId)

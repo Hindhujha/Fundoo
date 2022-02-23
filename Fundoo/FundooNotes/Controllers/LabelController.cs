@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Collections;
 using RepositoryLayer.Entities;
 using RepositoryLayer.Services;
+using CommonLayer.Label;
 
 namespace FundooNotes.Controllers
 {
@@ -105,7 +106,7 @@ namespace FundooNotes.Controllers
             {
                 int userID = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "userId").Value);
 
-                var LabelList = new List<Label>();
+                var LabelList = new List<LabelResponse>();
                 var NoteList = new List<Note>();
                 LabelList = await labelBL.GetAllDatas(userID);
              
@@ -131,13 +132,10 @@ namespace FundooNotes.Controllers
                 int userid = Convert.ToInt32(User.Claims.FirstOrDefault(x => x.Type == "userId").Value);
 
             
-              //  var userList = new List<User>();
+    
                 var LabelList = new List<Label>();
                 var noteList = new List<Note>();
                 LabelList = await labelBL.GetAllLabelsByNoteId(NoteId, userid);
-
-
-                //   return this.Ok(new { Success = true, message = $"GetAll note successfull ", data = userList });
                 return this.Ok(new { Success = true, message = $"GetAll Labels successfull ", data = LabelList });
 
                 return this.Ok(new { Success = true, message = $"Note datas are: " , data = noteList});

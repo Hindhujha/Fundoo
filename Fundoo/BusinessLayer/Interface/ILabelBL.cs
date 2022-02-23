@@ -1,4 +1,5 @@
-﻿using CommonLayer.LabelModel;
+﻿using CommonLayer.Label;
+using CommonLayer.LabelModel;
 using RepositoryLayer.Entities;
 using System;
 using System.Collections;
@@ -18,7 +19,7 @@ namespace BusinessLayer.Interface
         public bool DeleteLabel(int LabelId);
 
 
-        Task<List<Label>> GetAllDatas(int UserId);
+        Task<List<LabelResponse>> GetAllDatas(int UserId);
 
         Task<List<Label>> GetAllLabelsByNoteId(int NotesId, int UserId);
     }

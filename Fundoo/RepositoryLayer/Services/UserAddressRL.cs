@@ -19,7 +19,7 @@ namespace RepositoryLayer.Services
             this.dbContext = dbContext;
         }
 
-        public async Task AddUserAddress(UserAddressPostModel userAddress, int userId)
+        public bool AddUserAddress(UserAddressPostModel userAddress, int userId)
         {
             try
             {
@@ -27,11 +27,40 @@ namespace RepositoryLayer.Services
                 UserAddress useraddress = new UserAddress();
                 useraddress.UserId = userId;
                 useraddress.AddressId = new UserAddress().AddressId;
+                // userAddress1.AddressId = new UserAddress().AddressId;
+
                 useraddress.State = userAddress.State;
-                useraddress.Type = userAddress.Type;
                 useraddress.City = userAddress.City;
-                dbContext.UserAddresses.Add(useraddress);
-                await dbContext.SaveChangesAsync();
+                useraddress.Type = userAddress.Type;
+                if (useraddress.Type == "Home")
+                {
+                    useraddress.Type = "Home";
+                }
+                else if (useraddress.Type == "Work")
+                {
+                    useraddress.Type = "Work";
+                }
+                else
+                {
+                    useraddress.Type = "Other";
+                }
+                var duplicates = dbContext.UserAddresses
+                 .GroupBy(s => s.Type)
+                 .Distinct();
+                if(duplicates.Equals(useraddress.Type))
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                    dbContext.UserAddresses.Add(useraddress);
+                    dbContext.SaveChanges();
+                }
+                
+
+               
+                
             }
             catch (Exception e)
             {
@@ -77,7 +106,7 @@ namespace RepositoryLayer.Services
 
         }
 
-       public async Task RemoveAddress(int AddressId)
+       public async Task RemoveAddress(int AddressId, int UserId)
         {
             try
             {
