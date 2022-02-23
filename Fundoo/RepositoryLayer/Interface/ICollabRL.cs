@@ -12,6 +12,6 @@ namespace RepositoryLayer.Interface
         Task<List<Collab>> AddCollab(int UserId, int NotesId,  CollabPostModel collabPost);
 
         Task DeleteCollab(int UserId, int CollabId);
-        Task<List<Note>> GetAllCollaborators(int UserId, int NotesId);
+        Task<List<Collab>> GetAllCollaborators(int UserId);
     }
 }

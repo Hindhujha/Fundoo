@@ -64,14 +64,15 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public async Task<List<Note>> GetAllCollaborators(int UserId,int NotesId)
+        public async Task<List<Collab>> GetAllCollaborators(int UserId)
         {
             try
             {
-                return await dbContext.Note.Where(u => u.NotesId == NotesId)         
-               .Include(u => u.Collab)
-               .Include(u => u.User)
-               .ToListAsync();
+                Collab collabarator = new Collab();
+                return await dbContext.Collab.Where(u => u.UserId == UserId)
+                    .Include(u => u.Note)
+                    .Include(u => u.User)
+                    .ToListAsync();
             }
             catch (Exception e)
             {

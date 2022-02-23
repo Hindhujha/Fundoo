@@ -69,14 +69,19 @@ namespace FundooNotes
             
             services.AddTransient<IUserBL, UserBL>();
             services.AddTransient<IUserRL, UserRL>();
+
             services.AddTransient<INoteBL, NoteBL>();
             services.AddTransient<INoteRL, NoteRL>();
+
             services.AddTransient<ILabelBL, LabelBL>();
             services.AddTransient<ILabelRL, LabelRL>();
+
             services.AddTransient<IUserAddressBL, UserAddressBL>();
             services.AddTransient<IUserAddressRL, UserAddressRL>();
+
             services.AddTransient<ICollabBL, CollabBL>();
             services.AddTransient<ICollabRL, CollabRL>();
+
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

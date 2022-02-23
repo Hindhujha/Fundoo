@@ -58,10 +58,6 @@ namespace FundooNotes.Controllers
             {
                 var userId = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userId", StringComparison.InvariantCultureIgnoreCase));
                 int UserId = Int32.Parse(userId.Value);
-
-                //List<Collab> collab = new List<Collab>();
-
-
                 await collabBL.DeleteCollab(UserId,collabId);
 
                 return this.Ok(new { success = true, message = "Collaborator is deleted successfully", response = collabId });
@@ -75,8 +71,8 @@ namespace FundooNotes.Controllers
         }
 
         [Authorize]
-        [HttpGet("getallCollaborators/{noteId}")]
-        public async Task<IActionResult> GetAllCollaborators(int noteId)
+        [HttpGet("getallCollaborators")]
+        public async Task<IActionResult> GetAllCollaborators()
         {
             try
             {
@@ -84,10 +80,10 @@ namespace FundooNotes.Controllers
                 var userId = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userId", StringComparison.InvariantCultureIgnoreCase));
                 int UserId = Int32.Parse(userId.Value);
 
-                List<Note> collab = new List<Note>();
+                List<Collab> collab = new List<Collab>();
 
 
-                collab = await collabBL.GetAllCollaborators(UserId,noteId);
+                collab = await collabBL.GetAllCollaborators(UserId);
 
                 return this.Ok(new { success = true, message = "  Get All Collaborators from User ", response =collab });
 

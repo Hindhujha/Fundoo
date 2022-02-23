@@ -43,12 +43,12 @@ namespace BusinessLayer.Services
             }
         }
 
-        public async Task<List<Note>> GetAllCollaborators(int UserId,int NotesId)
+        public async Task<List<Collab>> GetAllCollaborators(int UserId)
         {
 
             try
             {
-                return await collabRL.GetAllCollaborators(UserId,NotesId);
+                return await collabRL.GetAllCollaborators(UserId);
             }
             catch (Exception e)
             {

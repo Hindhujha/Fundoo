@@ -13,6 +13,6 @@ namespace BusinessLayer.Interface
 
         Task DeleteCollab(int UserId, int CollabId);
 
-        Task<List<Note>> GetAllCollaborators(int UserId,int NotesId);
+        Task<List<Collab>> GetAllCollaborators(int UserId);
     }
 }
