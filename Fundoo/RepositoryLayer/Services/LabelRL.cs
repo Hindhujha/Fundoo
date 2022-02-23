@@ -82,43 +82,41 @@ namespace RepositoryLayer.Services
             Label labels = new Label();
             try
             {
-                //return await dbContext.Label.Where(l => l.UserId == userId)
-                //  //.Include(u => u.Note)
-                //  //.Include(u => u.User)
-                //  //.ToListAsync();
-                //  .Join(dbContext.User,
-                //l => l.UserId,
-                //u => u.UserId,
-                //(l, u) => new LabelResponse
-                //{
-                //    userId = (int)l.UserId,
-                //    email = u.email,
-                //    LabelName = l.LabelName,
-                //    fName = u.fName,
-                //    lName = u.lName,
-                //}).ToListAsync();
+               
                 return await dbContext.Label.Where(l => l.UserId == userId)
 
                   .Join(dbContext.User
                   .Join(dbContext.Note,
                     u => u.UserId,
                     n => n.UserId,
-                    (u, n) => new NoteResponse
-                    {
-                       
+                    (u, n) => new NoteUserResponse
+                    {   
+                        userId= u.UserId,
+                        NotesId=n.NotesId,
+                        fName=u.fName,
+                        lName=u.lName,
+                        color=n.Color,
+                        RegisteredDate= n.CreatedDate,
                         Title = n.Title,
-                        Description = n.Description
-
+                        Description = n.Description,
+                        email=u.email,
+                       
                     }),
-                   l => l.LabelName,
-                    n1 => n1.LabelName,
-                    (l, n1) => new LabelResponse
+                   l => l.Note.NotesId,
+                    un => un.NotesId,
+                    (l, un) => new LabelResponse
                     {
-                        
-                        // User=l.User.UserId,
-                        fName=l.User.fName,
-                        color = n1.color,
-                        LabelName = l.LabelName,
+                        userId=un.userId,
+                        NotesId=l.Note.NotesId,
+                        Title=un.Title,
+                        Description=un.Description,
+                        RegisteredDate=un.RegisteredDate,
+                        color=un.color,
+                        fName=un.fName,
+                        lName=un.lName,
+                        email=un.email,
+                        LabelName=l.LabelName
+                       
 
                     }).ToListAsync();
 
