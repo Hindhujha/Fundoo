@@ -18,11 +18,11 @@ namespace RepositoryLayer.Services
                 client.EnableSsl = true;
                 client.DeliveryMethod = SmtpDeliveryMethod.Network;
                 client.UseDefaultCredentials = true;
-                client.Credentials = new NetworkCredential("sridharhindhujha@gmail.com","hindhu17");
+                client.Credentials = new NetworkCredential("hindhujhasri@gmail.com","hindhujha");
 
                 MailMessage msgObj = new MailMessage();
                 msgObj.To.Add(email);
-                msgObj.From = new MailAddress("sridharhindhujha@gmail.com");
+                msgObj.From = new MailAddress("hindhujhasri@gmail.com");
                 msgObj.Subject = "Password Reset Link";
                 msgObj.Body = $"FundooNotes/{token}";
                 client.Send(msgObj);
